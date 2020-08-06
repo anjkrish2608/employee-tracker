@@ -1,0 +1,25 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "This application allows businesses to manage their employees, roles and departments on ne database.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anjkrish2608/employee-tracker.git"
+  },
+  "author": "anjkrish2608",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anjkrish2608/employee-tracker/issues"
+  },
+  "homepage": "https://github.com/anjkrish2608/employee-tracker#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1"
+  }
+}
