@@ -220,6 +220,7 @@ function updateEmployee() {
                 "first_name",
                 "last_name",
                 "role_id",
+                "manager_id",
             "Delete this employee"]
         }, {
             name: "change",
@@ -228,8 +229,17 @@ function updateEmployee() {
         }
     ]).then(function (answer) {
         if (answer.type === "role_id") {
-            answer.type = parseInt(answer.type);
+            answer.change = parseInt(answer.change);
             var query = "UPDATE employeeTable SET role_id = ? WHERE id = ?";
+            connection.query(query, [answer.change, answer.employee], function (err, res) {
+                if (err) throw err;
+                console.log("Employee information updated in the database!");
+                runSearch();
+            });
+        }
+        else if (answer.type === "manager_id") {
+            answer.change = parseInt(answer.change);
+            var query = "UPDATE employeeTable SET manager_id = ? WHERE id = ?";
             connection.query(query, [answer.change, answer.employee], function (err, res) {
                 if (err) throw err;
                 console.log("Employee information updated in the database!");
@@ -286,7 +296,7 @@ function updateRole() {
         }
     ]).then(function (answer) {
         if (answer.type === "Department_ID") {
-            answer.type = parseInt(answer.type);
+            answer.change = parseInt(answer.change);
             var query = "UPDATE roleTable SET department_id = ? WHERE id = ?";
             connection.query(query, [answer.change, answer.role], function (err, res) {
                 if (err) throw err;
@@ -311,7 +321,7 @@ function updateRole() {
             });
         }
         else{
-            answer.type = parseInt(answer.type);
+            answer.change = parseInt(answer.change);
             var query = "UPDATE roleTable SET salary = ? WHERE id = ?";
             connection.query(query, [answer.change, answer.role], function (err, res) {
                 if (err) throw err;
