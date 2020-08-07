@@ -12,4 +12,4 @@ VALUES("Anjini","Krishnan", 1,0),("Sharmani","Krishnan",2,1),("Ben","Duregon",3,
 SELECT * FROM employeeTable;
 SELECT * FROM roleTable;
 SELECT * FROM departmentTable;
-
+UPDATE employeeTable SET first_name = 'Sarah' WHERE id = 4;

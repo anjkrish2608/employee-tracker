@@ -41,60 +41,60 @@ function runSearch() {
                 "Employees",
                 "Roles",
                 "Departments",
-            "End"]
+                "End"]
         }
     ]).then(function (res) {
 
         switch (res.action) {
             case "Add":
-                switch(res.type){
+                switch (res.type) {
                     case "Employees":
                         addEmployee();
                         break;
-                        
-                        case "Roles":
+
+                    case "Roles":
                         addRole();
                         break;
-                        
-                        case "Departments":
+
+                    case "Departments":
                         addDepartment();
                         break;
-                        
-                    }
+
+                }
                 break;
 
             case "View":
-                switch(res.type){
+                switch (res.type) {
                     case "Employees":
                         viewEmployees();
                         break;
-                        
-                        case "Roles":
+
+                    case "Roles":
                         viewRoles();
                         break;
-                        
-                        case "Departments":
+
+                    case "Departments":
                         viewDepartments();
                         break;
-                        
-                    }
+
+                }
                 break;
 
             case "Update":
-                switch(res.type){
+                switch (res.type) {
                     case "Employees":
                         updateEmployee();
                         break;
-                        
-                        case "Roles":
+
+                    case "Roles":
                         updateRole();
                         break;
-                        
-                        case "Departments":
+
+                    case "Departments":
                         updateDepartment();
                         break;
-                        
-                    }
+
+                }
                 break;
 
             case "End":
@@ -105,9 +105,8 @@ function runSearch() {
     });
 }
 
-
 //add functiona
-function addEmployee(){
+function addEmployee() {
     inquirer.prompt([
         {
             name: "first_name",
@@ -131,17 +130,17 @@ function addEmployee(){
             default: 0
         }
     ]).then(function (answer) {
-       var query = "INSERT INTO employeeTable(first_name,last_name,role_id,manager_id) VALUES (?,?,?,?);";
-        console.log(query,  answer.first_name , answer.last_name,answer.role_id, answer.manager_id);
-        connection.query(query,  [answer.first_name , answer.last_name,answer.role_id, answer.manager_id], function (err,res) {
-            if(err) throw err;
+        var query = "INSERT INTO employeeTable(first_name,last_name,role_id,manager_id) VALUES (?,?,?,?);";
+        console.log(query, answer.first_name, answer.last_name, answer.role_id, answer.manager_id);
+        connection.query(query, [answer.first_name, answer.last_name, answer.role_id, answer.manager_id], function (err, res) {
+            if (err) throw err;
             console.log("New employee added to the database!");
             runSearch();
         });
     });
 }
 
-function addRole(){
+function addRole() {
     inquirer.prompt([
         {
             name: "title",
@@ -160,57 +159,111 @@ function addRole(){
         }
     ]).then(function (res) {
         var query = "INSERT INTO roleTable(title,salary,department_id) VALUES (?,?,?);";
-        connection.query(query, [res.title, res.salary,res.department_id ], function (res) {
+        connection.query(query, [res.title, res.salary, res.department_id], function (res) {
             console.log("New role added to the database!");
             runSearch();
         });
     });
 }
 
-function addDepartment(){
+function addDepartment() {
     inquirer.prompt([{
         name: "name",
         type: "input",
         message: "Enter the name of the department: "
     }]).then(function (res) {
-    var query = "INSERT INTO departmentTable(name) VALUES (?);";
-    connection.query(query, [res.name], function (res) {
-        console.log("New department added to the database!");
-        runSearch();
+        var query = "INSERT INTO departmentTable(name) VALUES (?);";
+        connection.query(query, [res.name], function (res) {
+            console.log("New department added to the database!");
+            runSearch();
+        });
     });
-});
 }
 
 //view functions
-function viewEmployees(){
-var query=connection.query("SELECT * FROM employeeTable;",function(err,res){
-    if (err) throw err;
-    consoleLogTable(res);
-
-});
+function viewEmployees() {
+    var query = connection.query("SELECT * FROM employeeTable;", function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        runSearch();
+    });
 }
 
-function viewRoles(){
-
+function viewRoles() {
+    var query = connection.query("SELECT * FROM roleTable;", function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        runSearch();
+    });
 }
 
-function viewDepartments(){
-
+function viewDepartments() {
+    var query = connection.query("SELECT * FROM departmentTable;", function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        runSearch();
+    });
 }
 
 //update functions
-function updateEmployee(){
+function updateEmployee() {
+    inquirer.prompt([
+        {
+            name: "employee",
+            type: "number",
+            message: "Enter the id of the employee you would like to change: "
+        }, {
+            name: "type",
+            type: "rawlist",
+            message: "What would you like to change: ",
+            choices: [
+                "first_name",
+                "last_name",
+                "role_id"]
+        }, {
+            name: "change",
+            type: "input",
+            message: "What would you like it to be: "
+        }
+    ]).then(function (answer) {
+        if (answer.type === "role_id") {
+            answer.type = parseInt(answer.type);
+            var query = "UPDATE employeeTable SET role_id = ? WHERE id = ?";
+        connection.query(query, [answer.change, answer.employee], function (err, res) {
+            if (err) throw err;
+            console.log("Employee information updated in the database!");
+            runSearch();
+        });
+        }
+        else if(answer.type==="first_name"){
+            var query = "UPDATE employeeTable SET first_name = ? WHERE id = ?";
+        connection.query(query, [answer.change, answer.employee], function (err, res) {
+            if (err) throw err;
+            console.log("Employee information updated in the database!");
+            runSearch();
+        });
+        }
+        else{
+            var query = "UPDATE employeeTable SET last_name = ? WHERE id = ?";
+        connection.query(query, [answer.change, answer.employee], function (err, res) {
+            if (err) throw err;
+            console.log("Employee information updated in the database!");
+            runSearch();
+        });
+        }
+        
+    });
+}
+
+function updateRole() {
 
 }
 
-function updateRole(){
+function updateDepartment() {
 
 }
 
-function updateDepartment(){
-
-}
-
+//closing application and ending connection
 function endSearch() {
     console.log("Thank you for using my application. Goodbye for now.");
     connection.end();
