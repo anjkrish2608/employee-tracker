@@ -219,48 +219,147 @@ function updateEmployee() {
             choices: [
                 "first_name",
                 "last_name",
-                "role_id"]
+                "role_id",
+            "Delete this employee"]
         }, {
             name: "change",
             type: "input",
-            message: "What would you like it to be: "
+            message: "What would you like it to be: (if n/a ENTER) "
         }
     ]).then(function (answer) {
         if (answer.type === "role_id") {
             answer.type = parseInt(answer.type);
             var query = "UPDATE employeeTable SET role_id = ? WHERE id = ?";
-        connection.query(query, [answer.change, answer.employee], function (err, res) {
-            if (err) throw err;
-            console.log("Employee information updated in the database!");
-            runSearch();
-        });
+            connection.query(query, [answer.change, answer.employee], function (err, res) {
+                if (err) throw err;
+                console.log("Employee information updated in the database!");
+                runSearch();
+            });
         }
-        else if(answer.type==="first_name"){
+        else if (answer.type === "first_name") {
             var query = "UPDATE employeeTable SET first_name = ? WHERE id = ?";
-        connection.query(query, [answer.change, answer.employee], function (err, res) {
-            if (err) throw err;
-            console.log("Employee information updated in the database!");
-            runSearch();
-        });
+            connection.query(query, [answer.change, answer.employee], function (err, res) {
+                if (err) throw err;
+                console.log("Employee information updated in the database!");
+                runSearch();
+            });
         }
-        else{
+        else if (answer.type === "Delete this employee") {
+            var query = "DELETE FROM employeeTable WHERE id = ?";
+            connection.query(query, [answer.employee], function (err, res) {
+                if (err) throw err;
+                console.log("Employee deleted from the database!");
+                runSearch();
+            });
+        }
+        else {
             var query = "UPDATE employeeTable SET last_name = ? WHERE id = ?";
-        connection.query(query, [answer.change, answer.employee], function (err, res) {
-            if (err) throw err;
-            console.log("Employee information updated in the database!");
-            runSearch();
-        });
+            connection.query(query, [answer.change, answer.employee], function (err, res) {
+                if (err) throw err;
+                console.log("Employee information updated in the database!");
+                runSearch();
+            });
         }
-        
+
     });
 }
 
 function updateRole() {
+    inquirer.prompt([
+        {
+            name: "role",
+            type: "number",
+            message: "Enter the id of the role you would like to change: "
+        }, {
+            name: "type",
+            type: "rawlist",
+            message: "What would you like to change: ",
+            choices: [
+                "Title",
+                "Salary",
+                "Department_ID",
+                "Delete this role"]
+        }, {
+            name: "change",
+            type: "input",
+            message: "What would you like it to be: (if n/a ENTER)"
+        }
+    ]).then(function (answer) {
+        if (answer.type === "Department_ID") {
+            answer.type = parseInt(answer.type);
+            var query = "UPDATE roleTable SET department_id = ? WHERE id = ?";
+            connection.query(query, [answer.change, answer.role], function (err, res) {
+                if (err) throw err;
+                console.log("Role information updated in the database!");
+                runSearch();
+            });
+        }
+        else if (answer.type === "Title") {
+            var query = "UPDATE roleTable SET title = ? WHERE id = ?";
+            connection.query(query, [answer.change, answer.role], function (err, res) {
+                if (err) throw err;
+                console.log("Role information updated in the database!");
+                runSearch();
+            });
+        }
+        else if (answer.type === "Delete this role") {
+            var query = "DELETE FROM roleTable WHERE id = ?";
+            connection.query(query, [answer.role], function (err, res) {
+                if (err) throw err;
+                console.log("Role deleted from the database!");
+                runSearch();
+            });
+        }
+        else{
+            answer.type = parseInt(answer.type);
+            var query = "UPDATE roleTable SET salary = ? WHERE id = ?";
+            connection.query(query, [answer.change, answer.role], function (err, res) {
+                if (err) throw err;
+                console.log("Role information updated in the database!");
+                runSearch();
+            });
+        }
 
+    });
 }
 
 function updateDepartment() {
+    inquirer.prompt([
+        {
+            name: "department",
+            type: "number",
+            message: "Enter the id of the department you would like to change: "
+        }, {
+            name: "type",
+            type: "rawlist",
+            message: "What would you like to change: ",
+            choices: [
+                "Name of Department",
+                "Delete this department"]
+        }, {
+            name: "change",
+            type: "input",
+            message: "What would you like it to be: (if n/a ENTER)"
+        }
+    ]).then(function (answer) {
+        if (answer.type === "Delete this department") {
+            var query = "DELETE FROM departmentTable WHERE id = ?";
+            connection.query(query, [answer.department], function (err, res) {
+                if (err) throw err;
+                console.log("Department deleted from the database!");
+                runSearch();
+            });
+        }
+        else{
+            var query = "UPDATE departmentTable SET name = ? WHERE id = ?";
+            connection.query(query, [answer.change, answer.department], function (err, res) {
+                if (err) throw err;
+                console.log("Department information updated in the database!");
+                runSearch();
+            });
+        }
 
+    });
 }
 
 //closing application and ending connection
