@@ -4,16 +4,16 @@ CREATE database employee_DB;
 USE employee_DB;
 
 CREATE TABLE employeeTable (
-  id INT NOT NULL,
+  id INT NOT NULL auto_increment,
   first_name VARCHAR(30),
   last_name VARCHAR(30),
   role_id INT,
-  manager_id INT NULL,
+  manager_id INT DEFAULT NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE roleTable (
-  id INT NOT NULL,
+  id INT NOT NULL auto_increment,
   title VARCHAR(30),
   salary DECIMAL,
   department_id INT,
@@ -21,7 +21,7 @@ CREATE TABLE roleTable (
 );
 
 CREATE TABLE departmentTable (
-  id INT NOT NULL,
+  id INT NOT NULL auto_increment,
   name VARCHAR(30),
   PRIMARY KEY (id)
 );
