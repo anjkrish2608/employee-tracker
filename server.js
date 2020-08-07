@@ -36,7 +36,7 @@ function runSearch() {
         {
             name: "type",
             type: "rawlist",
-            message: "Which group would you like to change?",
+            message: "Which group?",
             choices: [
                 "Employees",
                 "Roles",
@@ -44,7 +44,6 @@ function runSearch() {
                 "End"]
         }
     ]).then(function (res) {
-
         switch (res.action) {
             case "Add":
                 switch (res.type) {
@@ -225,11 +224,28 @@ function viewRoles() {
 }
 
 function viewDepartments() {
-    var query = connection.query("SELECT * FROM departmentTable;", function (err, res) {
-        if (err) throw err;
-        console.table(res);
-        runSearch();
-    });
+    inquirer.prompt([
+        {
+            name: "type",
+            message: "How would you like to view the department?",
+            type: "rawlist",
+            choices: [
+                "All employees",
+                "View utilised budget of Department"
+            ]
+        }]).then(function (answer) {
+            if (answer.type === "View utilised budget of Department") {
+                budget();
+            }
+            else {
+                var query = connection.query("SELECT * FROM departmentTable;", function (err, res) {
+                    if (err) throw err;
+                    console.table(res);
+                    runSearch();
+                });
+            }
+
+        });
 }
 
 //update functions
@@ -396,6 +412,28 @@ function updateDepartment() {
             });
         }
 
+    });
+}
+
+
+//budget of department
+function budget() {
+    inquirer.prompt([{
+        name: "department",
+        message: "Please enter the id of the department: ",
+        type: "number"
+    }]).then(function (answer) {
+        var query = "SELECT * FROM roleTable WHERE department_id=?";
+        connection.query(query, [answer.department], function (err, res) {
+            if (err) throw err;
+            var sum=0;
+            for (let i = 0; i < res.length; i++) {
+                sum+=parseInt(res[i].salary);
+            }
+            sum=sum.toFixed(2);
+            console.log("The Department with ID: " + answer.department + " has a total utilized budget of $" +sum);
+            runSearch();
+        });
     });
 }
 
