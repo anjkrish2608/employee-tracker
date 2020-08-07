@@ -182,11 +182,38 @@ function addDepartment() {
 
 //view functions
 function viewEmployees() {
-    var query = connection.query("SELECT * FROM employeeTable;", function (err, res) {
-        if (err) throw err;
-        console.table(res);
-        runSearch();
-    });
+    inquirer.prompt([
+        {
+            name: "type",
+            message: "How would you like to view the employees?",
+            type: "rawlist",
+            choices: [
+                "All employees",
+                "Employees by Manager"
+            ]
+        }]).then(function (answer) {
+            if (answer.type === "Employees by Manager") {
+                inquirer.prompt([{
+                    name: "manager",
+                    type: "number",
+                    message: "Please enter the id of the manager: "
+                }]).then(function (res) {
+                    var query = "SELECT * FROM employeeTable WHERE manager_id=?";
+                    connection.query(query, [res.manager], function (err, res) {
+                        if (err) throw err;
+                        console.table(res);
+                        runSearch();
+                    });
+                })
+            }
+            else {
+                var query = connection.query("SELECT * FROM employeeTable;", function (err, res) {
+                    if (err) throw err;
+                    console.table(res);
+                    runSearch();
+                });
+            }
+        });
 }
 
 function viewRoles() {
@@ -221,7 +248,7 @@ function updateEmployee() {
                 "last_name",
                 "role_id",
                 "manager_id",
-            "Delete this employee"]
+                "Delete this employee"]
         }, {
             name: "change",
             type: "input",
@@ -320,7 +347,7 @@ function updateRole() {
                 runSearch();
             });
         }
-        else{
+        else {
             answer.change = parseInt(answer.change);
             var query = "UPDATE roleTable SET salary = ? WHERE id = ?";
             connection.query(query, [answer.change, answer.role], function (err, res) {
@@ -360,7 +387,7 @@ function updateDepartment() {
                 runSearch();
             });
         }
-        else{
+        else {
             var query = "UPDATE departmentTable SET name = ? WHERE id = ?";
             connection.query(query, [answer.change, answer.department], function (err, res) {
                 if (err) throw err;
