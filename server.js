@@ -15,6 +15,7 @@ var connection = mysql.createConnection({
     password: "anj",
     database: "employee_DB"
 });
+
 connection.connect(function (err) {
     if (err) throw err;
     runSearch();
@@ -39,21 +40,61 @@ function runSearch() {
             choices: [
                 "Employees",
                 "Roles",
-                "Departments"]
+                "Departments",
+            "End"]
         }
     ]).then(function (res) {
 
         switch (res.action) {
             case "Add":
-                addToDatabase(res.type);
+                switch(res.type){
+                    case "Employees":
+                        addEmployee();
+                        break;
+                        
+                        case "Roles":
+                        addRole();
+                        break;
+                        
+                        case "Departments":
+                        addDepartment();
+                        break;
+                        
+                    }
                 break;
 
             case "View":
-                viewDatabase(res.type);
+                switch(res.type){
+                    case "Employees":
+                        viewEmployees();
+                        break;
+                        
+                        case "Roles":
+                        viewRoles();
+                        break;
+                        
+                        case "Departments":
+                        viewDepartments();
+                        break;
+                        
+                    }
                 break;
 
             case "Update":
-                updateDatabase(res.type);
+                switch(res.type){
+                    case "Employees":
+                        updateEmployee();
+                        break;
+                        
+                        case "Roles":
+                        updateRole();
+                        break;
+                        
+                        case "Departments":
+                        updateDepartment();
+                        break;
+                        
+                    }
                 break;
 
             case "End":
@@ -65,117 +106,109 @@ function runSearch() {
 }
 
 
-function addToDatabase(table) {
-    switch (table) {
-        case "Employees":
-            inquirer.prompt([
-                {
-                    name: "first_name",
-                    type: "input",
-                    message: "Enter the first name of the employee: "
-                },
-                {
-                    name: "last_name",
-                    type: "input",
-                    message: "Enter the last name of the employee: "
-                },
-                {
-                    name: "role_id",
-                    type: "number",
-                    message: "Enter the role id of the employee: "
-                },
-                {
-                    name: "manager_id",
-                    type: "input",
-                    message: "Enter the manager of the employee: ",
-                    default: 0
-                }
-            ]).then(function (res) {
-                var query = "INSERT INTO employeeTable VALUES (?,?,?,?)";
-                connection.query(query, { first_name: res.first_name }, { last_name: res.last_name }, { role_id: res.role_id }, { manager_id: res.manager_id }, function (res) {
-                    console.log("New employee added to the database!");
-                    runSearch();
-                });
-            });
+//add functiona
+function addEmployee(){
+    inquirer.prompt([
+        {
+            name: "first_name",
+            type: "input",
+            message: "Enter the first name of the employee: "
+        },
+        {
+            name: "last_name",
+            type: "input",
+            message: "Enter the last name of the employee: "
+        },
+        {
+            name: "role_id",
+            type: "number",
+            message: "Enter the role id of the employee: "
+        },
+        {
+            name: "manager_id",
+            type: "number",
+            message: "Enter the manager of the employee: ",
+            default: 0
+        }
+    ]).then(function (answer) {
+       var query = "INSERT INTO employeeTable(first_name,last_name,role_id,manager_id) VALUES (?,?,?,?);";
+        console.log(query,  answer.first_name , answer.last_name,answer.role_id, answer.manager_id);
+        connection.query(query,  [answer.first_name , answer.last_name,answer.role_id, answer.manager_id], function (err,res) {
+            if(err) throw err;
+            console.log("New employee added to the database!");
+            runSearch();
+        });
+    });
+}
 
+function addRole(){
+    inquirer.prompt([
+        {
+            name: "title",
+            type: "input",
+            message: "Enter the title of the role: "
+        },
+        {
+            name: "salary",
+            type: "number",
+            message: "Enter the salary of the role: "
+        },
+        {
+            name: "department_id",
+            type: "number",
+            message: "Enter the department id of the role: "
+        }
+    ]).then(function (res) {
+        var query = "INSERT INTO roleTable(title,salary,department_id) VALUES (?,?,?);";
+        connection.query(query, [res.title, res.salary,res.department_id ], function (res) {
+            console.log("New role added to the database!");
+            runSearch();
+        });
+    });
+}
 
-            break;
+function addDepartment(){
+    inquirer.prompt([{
+        name: "name",
+        type: "input",
+        message: "Enter the name of the department: "
+    }]).then(function (res) {
+    var query = "INSERT INTO departmentTable(name) VALUES (?);";
+    connection.query(query, [res.name], function (res) {
+        console.log("New department added to the database!");
+        runSearch();
+    });
+});
+}
 
-        case "Roles":
-            inquirer.prompt([
-                {
-                    name: "title",
-                    type: "input",
-                    message: "Enter the title of the role: "
-                },
-                {
-                    name: "salary",
-                    type: "number",
-                    message: "Enter the salary of the role: "
-                },
-                {
-                    name: "department_id",
-                    type: "number",
-                    message: "Enter the department id of the role: "
-                }
-            ]).then(function (res) {
-                var query = "INSERT INTO roleTable VALUES (?,?,?)";
-                connection.query(query, { title: res.title}, { salary: res.salary }, { department_id: res.department_id }, function (res) {
-                    console.log("New role added to the database!");
-                    runSearch();
-                });
-            });
+//view functions
+function viewEmployees(){
+var query=connection.query("SELECT * FROM employeeTable;",function(err,res){
+    if (err) throw err;
+    consoleLogTable(res);
 
-            break;
+});
+}
 
-        case "Departments":
-            inquirer.prompt([{
-                    name: "name",
-                    type: "input",
-                    message: "Enter the name of the department: "
-                }]).then(function (res) {
-                var query = "INSERT INTO departmentTable VALUES (?)";
-                connection.query(query, { name: res.name }, function (res) {
-                    console.log("New department added to the database!");
-                    runSearch();
-                });
-            });
-
-            break;
-    }
+function viewRoles(){
 
 }
 
-function viewDatabase(table) {
-    switch (table) {
-        case "Employees":
+function viewDepartments(){
 
-            break;
-
-        case "Roles":
-
-            break;
-
-        case "Departments":
-
-            break;
-    }
 }
 
-function updateDatabase(table) {
-    switch (table) {
-        case "Employees":
+//update functions
+function updateEmployee(){
 
-            break;
+}
 
-        case "Roles":
+function updateRole(){
 
-            break;
+}
 
-        case "Departments":
+function updateDepartment(){
 
-            break;
-    }
 }
 
 function endSearch() {
