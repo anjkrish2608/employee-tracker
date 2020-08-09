@@ -2,7 +2,7 @@
 
 [Click here to view repository.](https://github.com/anjkrish2608/employee-tracker)
 
-[Click here to view a video of the application functioning.](https://drive.google.com/file/d/1WO7gNZV8USGhKwzZ8ZH-sVZbRKCZoBk2/view)
+[Click here to view a video of the application functioning.](https://drive.google.com/file/d/18rVK19D81w4IyP2Tv16urD5Z63FTAjYH/view)
 
 ## Table of Contents
 
